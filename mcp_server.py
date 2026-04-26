@@ -4,6 +4,15 @@ import logging
 import os
 import json
 import sys
+
+# ---- START BUGFIX PROXY ----
+# We redirect stdout to stderr during imports to prevent browser-use from 
+# outputting initialization logs directly to the stdout JSON-RPC channel.
+_clean_stdout = sys.stdout
+sys.stdout = sys.stderr
+os.environ["ANONYMIZED_TELEMETRY"] = "false"
+# ----------------------------
+
 from dotenv import load_dotenv
 from googlesearch import search
 from mcp.server import FastMCP
@@ -11,6 +20,10 @@ from browser_use import Browser as BrowserUseBrowser
 from browser_use import BrowserConfig
 from browser_use.browser.context import BrowserContext
 from app.code_execution import interpreter, bash_command, SANDBOX_DIR
+
+# ---- RESTORE STDOUT ----
+sys.stdout = _clean_stdout
+# ------------------------
 
 # Load environment variables
 load_dotenv()
